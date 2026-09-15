@@ -1,29 +1,422 @@
 import { Show, SignInButton, SignUpButton, useUser } from "@clerk/react";
-import { ArrowRight, BrainCircuit, CheckCircle2, ChevronRight, FileText, LockKeyhole, ScanLine, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BrainCircuit,
+  CheckCircle2,
+  ChevronRight,
+  FileText,
+  LockKeyhole,
+  ScanLine,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { Link } from "wouter";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-const signals = ["DenseNet121 transfer learning", "Multi-label chest X-ray analysis", "Grad-CAM visual explanations"];
+const signals = [
+  "DenseNet121 transfer learning",
+  "Multi-label chest X-ray analysis",
+  "Grad-CAM visual explanations",
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+const staggerContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+};
+
+const scrollReveal = {
+  hidden: { opacity: 0, y: 32 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+};
 
 function Brand() {
-  return <Link href="/" className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-300 text-[#06101d] shadow-[0_0_30px_rgba(103,232,249,.22)]"><ScanLine className="h-5 w-5" /></span><span className="font-semibold tracking-tight text-white">MediVision <span className="text-cyan-300">AI</span></span></Link>;
+  return (
+    <Link href="/" className="flex items-center gap-3">
+      <span className="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-300 text-[#06101d] shadow-[0_0_30px_rgba(103,232,249,.22)]">
+        <ScanLine className="h-5 w-5" />
+      </span>
+      <span className="font-semibold tracking-tight text-white">
+        MediVision <span className="text-cyan-300">AI</span>
+      </span>
+    </Link>
+  );
 }
 
 export default function Home() {
   const { user } = useUser();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className="min-h-screen overflow-hidden bg-[#07101f] text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_12%,rgba(34,211,238,.16),transparent_26%),radial-gradient(circle_at_0%_60%,rgba(14,116,144,.14),transparent_32%)]" />
-      <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-10"><Brand /><div className="hidden items-center gap-8 text-sm text-slate-300 md:flex"><a href="#capabilities" className="transition hover:text-white">Capabilities</a><a href="#safety" className="transition hover:text-white">Safety first</a><a href="#workflow" className="transition hover:text-white">Workflow</a></div><div className="flex items-center gap-3"><Show when="signed-out"><SignInButton mode="modal"><Button variant="ghost" className="text-slate-200 hover:bg-white/10 hover:text-white">Sign in</Button></SignInButton><SignUpButton mode="modal"><Button className="rounded-full bg-cyan-300 px-5 text-[#06101d] hover:bg-cyan-200">Create account <ArrowRight className="ml-2 h-4 w-4" /></Button></SignUpButton></Show><Show when="signed-in"><Link href="/dashboard"><Button className="rounded-full bg-cyan-300 px-5 text-[#06101d] hover:bg-cyan-200">Open workspace <ArrowRight className="ml-2 h-4 w-4" /></Button></Link></Show></div></nav>
-      <section className="relative z-10 mx-auto grid max-w-7xl gap-14 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:px-10 lg:pt-24">
-        <div><Badge className="border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-cyan-200 hover:bg-cyan-300/10"><Sparkles className="mr-2 h-3.5 w-3.5" />Research-grade imaging workspace</Badge><h1 className="mt-7 max-w-3xl text-5xl font-semibold leading-[1.03] tracking-[-.045em] text-white sm:text-6xl lg:text-7xl">See the signal<br /><span className="text-cyan-300">behind the scan.</span></h1><p className="mt-7 max-w-xl text-lg leading-8 text-slate-300">A calm, transparent workspace for exploring chest X-ray model predictions, probability signals, and visual explanations—built for research teams.</p><div className="mt-9 flex flex-wrap gap-3"><Show when="signed-out"><SignUpButton mode="modal"><Button size="lg" className="rounded-full bg-cyan-300 px-6 text-[#06101d] hover:bg-cyan-200">Start with a secure account <ArrowRight className="ml-2 h-4 w-4" /></Button></SignUpButton></Show><Show when="signed-in"><Link href="/dashboard"><Button size="lg" className="rounded-full bg-cyan-300 px-6 text-[#06101d] hover:bg-cyan-200">Continue as {user?.firstName || "researcher"} <ArrowRight className="ml-2 h-4 w-4" /></Button></Link></Show><a href="#safety"><Button size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[.03] px-6 text-slate-200 hover:bg-white/10 hover:text-white">Read the safeguards</Button></a></div><div className="mt-12 grid gap-3 sm:grid-cols-3">{signals.map(signal => <div key={signal} className="flex items-start gap-2 text-sm text-slate-400"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />{signal}</div>)}</div></div>
-        <div className="relative"><div className="absolute -inset-6 rounded-[3rem] bg-cyan-300/10 blur-3xl" /><div className="relative rounded-[2rem] border border-white/10 bg-white/[.06] p-3 shadow-2xl shadow-cyan-950/30 backdrop-blur"><div className="rounded-[1.5rem] border border-white/10 bg-[#0c1a2d] p-5"><div className="flex items-center justify-between"><div><p className="text-xs uppercase tracking-[.2em] text-slate-500">Live workspace</p><p className="mt-1 text-sm font-medium text-white">Study overview</p></div><div className="flex items-center gap-2 text-xs text-emerald-300"><span className="h-2 w-2 rounded-full bg-emerald-300" />System ready</div></div><div className="mt-6 rounded-2xl border border-cyan-300/15 bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,.13),transparent_62%),linear-gradient(135deg,#102a43,#091524)] p-8"><div className="mx-auto aspect-[4/3] max-w-[290px] rounded-[50%] border border-cyan-200/20 bg-[radial-gradient(ellipse_at_48%_44%,rgba(226,232,240,.6),transparent_18%),radial-gradient(ellipse_at_38%_50%,rgba(148,163,184,.32),transparent_45%),radial-gradient(ellipse_at_62%_50%,rgba(148,163,184,.25),transparent_45%)] opacity-80 shadow-[0_0_80px_rgba(34,211,238,.12)]" /><div className="mt-5 flex justify-center gap-2"><span className="rounded-full bg-cyan-300/15 px-3 py-1 text-xs text-cyan-200">Explainable</span><span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-300">Version v1.0</span></div></div><div className="mt-5 grid grid-cols-3 gap-3">{[["Pneumonia","0.82","high"],["Effusion","0.41","watch"],["Cardiomegaly","0.16","low"]].map(([label,value,level])=><div key={label} className="rounded-xl border border-white/8 bg-white/[.04] p-3"><p className="text-xs text-slate-400">{label}</p><p className="mt-2 text-xl font-semibold text-white">{value}</p><p className={`mt-1 text-[10px] uppercase tracking-widest ${level === "high" ? "text-amber-300" : "text-slate-500"}`}>{level} signal</p></div>)}</div></div></div></div>
-      </section>
-      <section id="capabilities" className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-10"><div className="max-w-2xl"><p className="text-sm font-semibold uppercase tracking-[.24em] text-cyan-300">Built for clarity</p><h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">A research workflow that keeps people in control.</h2></div><div className="mt-12 grid gap-4 md:grid-cols-3">{[[BrainCircuit,"Model signals","DenseNet121 multi-label predictions with explicit model versioning and no fabricated outputs."],[FileText,"Study reports","Keep analysis history organized under your account, ready for review and future report features."],[ShieldCheck,"Safety by default","Every result is clearly framed as a research signal—not a diagnosis or clinical decision."]].map(([Icon,title,copy])=><article key={title as string} className="group rounded-3xl border border-white/10 bg-white/[.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[.06]"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-cyan-300/10 text-cyan-300"><Icon className="h-5 w-5" /></div><h3 className="mt-6 text-xl font-medium">{title as string}</h3><p className="mt-3 leading-7 text-slate-400">{copy as string}</p><ChevronRight className="mt-6 h-5 w-5 text-slate-600 transition group-hover:translate-x-1 group-hover:text-cyan-300" /></article>)}</div></section>
-      <section id="workflow" className="border-y border-white/10 bg-white/[.025] px-6 py-20 lg:px-10"><div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-center"><div><p className="text-sm font-semibold uppercase tracking-[.24em] text-cyan-300">The workflow</p><h2 className="mt-4 text-3xl font-semibold tracking-tight">From image to insight in one focused loop.</h2></div><div className="grid gap-3 sm:grid-cols-3">{[["01","Upload","Add an X-ray study securely."],["02","Analyze","Run the configured ML model."],["03","Review","Explore probabilities and explanations."]].map(([step,title,copy])=><div key={step} className="rounded-2xl border border-white/10 bg-[#0b1728] p-5"><p className="text-xs font-semibold tracking-[.2em] text-cyan-300">{step}</p><p className="mt-7 font-medium">{title}</p><p className="mt-2 text-sm leading-6 text-slate-400">{copy}</p></div>)}</div></div></section>
-      <section id="safety" className="mx-auto max-w-7xl px-6 py-20 lg:px-10"><div className="flex flex-col justify-between gap-8 rounded-[2rem] border border-amber-300/15 bg-amber-300/[.05] p-8 md:flex-row md:items-center md:p-10"><div className="flex max-w-2xl gap-4"><LockKeyhole className="mt-1 h-6 w-6 shrink-0 text-amber-300" /><div><h2 className="text-xl font-semibold">Research prototype, not a diagnosis.</h2><p className="mt-2 leading-7 text-slate-300">MediVision AI is designed for educational and research use. Its probabilities and Grad-CAM visualizations must not be used for medical decision-making.</p></div></div><Link href="/sign-up"><Button variant="outline" className="shrink-0 rounded-full border-amber-200/30 bg-transparent text-amber-100 hover:bg-amber-100/10">Create workspace <ArrowRight className="ml-2 h-4 w-4" /></Button></Link></div></section>
-      <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-10"><Brand /><p>Explainable imaging research, designed responsibly.</p></footer>
-    </main>
+    <>
+      <AnimatePresence>
+        {showSplash && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="fixed inset-0 z-50 grid place-items-center bg-[#07101f]/80 backdrop-blur-xl"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="flex items-center gap-3"
+            >
+              <span className="grid h-14 w-14 place-items-center rounded-2xl bg-cyan-300 text-[#06101d] shadow-[0_0_40px_rgba(103,232,249,.35)]">
+                <ScanLine className="h-7 w-7" />
+              </span>
+              <span className="text-4xl font-semibold tracking-tight text-white">
+                MediVision <span className="text-cyan-300">AI</span>
+              </span>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <main className="min-h-screen overflow-hidden bg-[#07101f] text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_12%,rgba(34,211,238,.16),transparent_26%),radial-gradient(circle_at_0%_60%,rgba(14,116,144,.14),transparent_32%)]" />
+
+        <motion.nav
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-10"
+        >
+          <Brand />
+          <div className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
+            <a href="#capabilities" className="transition hover:text-white">
+              Capabilities
+            </a>
+            <a href="#safety" className="transition hover:text-white">
+              Safety first
+            </a>
+            <a href="#workflow" className="transition hover:text-white">
+              Workflow
+            </a>
+          </div>
+          <div className="flex items-center gap-3">
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <Button
+                  variant="ghost"
+                  className="text-slate-200 hover:bg-white/10 hover:text-white"
+                >
+                  Sign in
+                </Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button className="rounded-full bg-cyan-300 px-5 text-[#06101d] hover:bg-cyan-200">
+                  Create account <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              <Link href="/dashboard">
+                <Button className="rounded-full bg-cyan-300 px-5 text-[#06101d] hover:bg-cyan-200">
+                  Open workspace <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </Show>
+          </div>
+        </motion.nav>
+
+        <section className="relative z-10 mx-auto grid max-w-7xl gap-14 px-6 pb-24 pt-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:px-10 lg:pt-24">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
+            <motion.div variants={fadeUp}>
+              <Badge className="border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-cyan-200 hover:bg-cyan-300/10">
+                <Sparkles className="mr-2 h-3.5 w-3.5" />
+                Research-grade imaging workspace
+              </Badge>
+            </motion.div>
+            <motion.h1
+              variants={fadeUp}
+              className="mt-7 max-w-3xl text-5xl font-semibold leading-[1.03] tracking-[-.045em] text-white sm:text-6xl lg:text-7xl"
+            >
+              See the signal
+              <br />
+              <span className="text-cyan-300">behind the scan.</span>
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              className="mt-7 max-w-xl text-lg leading-8 text-slate-300"
+            >
+              A calm, transparent workspace for exploring chest X-ray model
+              predictions, probability signals, and visual explanations—built
+              for research teams.
+            </motion.p>
+            <motion.div variants={fadeUp} className="mt-9 flex flex-wrap gap-3">
+              <Show when="signed-out">
+                <SignUpButton mode="modal">
+                  <Button
+                    size="lg"
+                    className="rounded-full bg-cyan-300 px-6 text-[#06101d] hover:bg-cyan-200"
+                  >
+                    Start with a secure account{" "}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </SignUpButton>
+              </Show>
+              <Show when="signed-in">
+                <Link href="/dashboard">
+                  <Button
+                    size="lg"
+                    className="rounded-full bg-cyan-300 px-6 text-[#06101d] hover:bg-cyan-200"
+                  >
+                    Continue as {user?.firstName || "researcher"}{" "}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </Show>
+              <a href="#safety">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full border-white/15 bg-white/[.03] px-6 text-slate-200 hover:bg-white/10 hover:text-white"
+                >
+                  Read the safeguards
+                </Button>
+              </a>
+            </motion.div>
+            <motion.div
+              variants={fadeUp}
+              className="mt-12 grid gap-3 sm:grid-cols-3"
+            >
+              {signals.map(signal => (
+                <div
+                  key={signal}
+                  className="flex items-start gap-2 text-sm text-slate-400"
+                >
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+                  {signal}
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+            className="relative"
+          >
+            <div className="absolute -inset-6 rounded-[3rem] bg-cyan-300/10 blur-3xl" />
+            <div className="relative rounded-[2rem] border border-white/10 bg-white/[.06] p-3 shadow-2xl shadow-cyan-950/30 backdrop-blur">
+              <div className="rounded-[1.5rem] border border-white/10 bg-[#0c1a2d] p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[.2em] text-slate-500">
+                      Live workspace
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-white">
+                      Study overview
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-emerald-300">
+                    <motion.span
+                      className="h-2 w-2 rounded-full bg-emerald-300"
+                      animate={{ opacity: [1, 0.3, 1] }}
+                      transition={{
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                    System ready
+                  </div>
+                </div>
+                <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,.13),transparent_62%),linear-gradient(135deg,#102a43,#091524)] p-8">
+                  <div className="mx-auto aspect-[4/3] max-w-[290px] rounded-[50%] border border-cyan-200/20 bg-[radial-gradient(ellipse_at_48%_44%,rgba(226,232,240,.6),transparent_18%),radial-gradient(ellipse_at_38%_50%,rgba(148,163,184,.32),transparent_45%),radial-gradient(ellipse_at_62%_50%,rgba(148,163,184,.25),transparent_45%)] opacity-80 shadow-[0_0_80px_rgba(34,211,238,.12)]" />
+                  <div className="mt-5 flex justify-center gap-2">
+                    <span className="rounded-full bg-cyan-300/15 px-3 py-1 text-xs text-cyan-200">
+                      Explainable
+                    </span>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-300">
+                      Version v1.0
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  {[
+                    ["Pneumonia", "0.82", "high"],
+                    ["Effusion", "0.41", "watch"],
+                    ["Cardiomegaly", "0.16", "low"],
+                  ].map(([label, value, level], i) => (
+                    <motion.div
+                      key={label}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.6 + i * 0.1 }}
+                      className="rounded-xl border border-white/8 bg-white/[.04] p-3"
+                    >
+                      <p className="text-xs text-slate-400">{label}</p>
+                      <p className="mt-2 text-xl font-semibold text-white">
+                        {value}
+                      </p>
+                      <p
+                        className={`mt-1 text-[10px] uppercase tracking-widest ${level === "high" ? "text-amber-300" : "text-slate-500"}`}
+                      >
+                        {level} signal
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        <motion.section
+          id="capabilities"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-10"
+        >
+          <motion.div variants={scrollReveal} className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[.24em] text-cyan-300">
+              Built for clarity
+            </p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
+              A research workflow that keeps people in control.
+            </h2>
+          </motion.div>
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {[
+              [
+                BrainCircuit,
+                "Model signals",
+                "DenseNet121 multi-label predictions with explicit model versioning and no fabricated outputs.",
+              ],
+              [
+                FileText,
+                "Study reports",
+                "Keep analysis history organized under your account, ready for review and future report features.",
+              ],
+              [
+                ShieldCheck,
+                "Safety by default",
+                "Every result is clearly framed as a research signal—not a diagnosis or clinical decision.",
+              ],
+            ].map(([Icon, title, copy]) => (
+              <motion.article
+                key={title as string}
+                variants={scrollReveal}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="group rounded-3xl border border-white/10 bg-white/[.04] p-7 hover:border-cyan-300/30 hover:bg-white/[.06]"
+              >
+                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-cyan-300/10 text-cyan-300">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-6 text-xl font-medium">{title as string}</h3>
+                <p className="mt-3 leading-7 text-slate-400">
+                  {copy as string}
+                </p>
+                <ChevronRight className="mt-6 h-5 w-5 text-slate-600 transition group-hover:translate-x-1 group-hover:text-cyan-300" />
+              </motion.article>
+            ))}
+          </div>
+        </motion.section>
+
+        <section
+          id="workflow"
+          className="border-y border-white/10 bg-white/[.025] px-6 py-20 lg:px-10"
+        >
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerContainer}
+            className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-center"
+          >
+            <motion.div variants={scrollReveal}>
+              <p className="text-sm font-semibold uppercase tracking-[.24em] text-cyan-300">
+                The workflow
+              </p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight">
+                From image to insight in one focused loop.
+              </h2>
+            </motion.div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["01", "Upload", "Add an X-ray study securely."],
+                ["02", "Analyze", "Run the configured ML model."],
+                ["03", "Review", "Explore probabilities and explanations."],
+              ].map(([step, title, copy]) => (
+                <motion.div
+                  key={step}
+                  variants={scrollReveal}
+                  className="rounded-2xl border border-white/10 bg-[#0b1728] p-5"
+                >
+                  <p className="text-xs font-semibold tracking-[.2em] text-cyan-300">
+                    {step}
+                  </p>
+                  <p className="mt-7 font-medium">{title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                    {copy}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        <motion.section
+          id="safety"
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="mx-auto max-w-7xl px-6 py-20 lg:px-10"
+        >
+          <div className="flex flex-col justify-between gap-8 rounded-[2rem] border border-amber-300/15 bg-amber-300/[.05] p-8 md:flex-row md:items-center md:p-10">
+            <div className="flex max-w-2xl gap-4">
+              <LockKeyhole className="mt-1 h-6 w-6 shrink-0 text-amber-300" />
+              <div>
+                <h2 className="text-xl font-semibold">
+                  Research prototype, not a diagnosis.
+                </h2>
+                <p className="mt-2 leading-7 text-slate-300">
+                  MediVision AI is designed for educational and research use.
+                  Its probabilities and Grad-CAM visualizations must not be used
+                  for medical decision-making.
+                </p>
+              </div>
+            </div>
+            <Link href="/sign-up">
+              <Button
+                variant="outline"
+                className="shrink-0 rounded-full border-amber-200/30 bg-transparent text-amber-100 hover:bg-amber-100/10"
+              >
+                Create workspace <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </motion.section>
+
+        <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-6 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+          <Brand />
+          <p>Explainable imaging research, designed responsibly.</p>
+        </footer>
+      </main>
+    </>
   );
 }
