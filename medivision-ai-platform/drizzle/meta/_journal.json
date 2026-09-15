@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1789052182874,
+      "tag": "0000_tense_the_professor",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1789052768824,
+      "tag": "0001_faithful_turbo",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1789053486620,
+      "tag": "0002_worried_sauron",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1789054139026,
+      "tag": "0003_empty_wolverine",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1789054957881,
+      "tag": "0004_woozy_nekra",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1789055648669,
+      "tag": "0005_tearful_sheva_callister",
+      "breakpoints": true
+    }
+  ]
+}
