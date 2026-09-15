@@ -1,0 +1,32 @@
+dataset:
+  csv_path: ./data/labels.csv
+  image_root: ./data/images
+  image_column: image_path
+  class_names: [Normal, Pneumonia, Cardiomegaly, Pleural Effusion]
+  train_fraction: 0.70
+  val_fraction: 0.15
+  test_fraction: 0.15
+  dataset_version: dataset-v1
+  seed: 42
+model:
+  input_size: 224
+  pretrained: true
+  dropout: 0.2
+training:
+  epochs: 20
+  batch_size: 16
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  patience: 5
+  num_workers: 2
+  threshold: 0.5
+  freeze_backbone_epochs: 1
+runtime:
+  model_path: ./models/best_model.pth
+  metadata_path: ./models/metadata.json
+  model_version: v1.0
+  output_dir: ./outputs
+  device: auto
+service:
+  host: 0.0.0.0
+  port: 8000

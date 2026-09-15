@@ -1,0 +1,161 @@
+{
+  "version": "v2.0-multimodal",
+  "architecture": "DenseNet121 + metadata fusion",
+  "datasetVersion": "unversioned",
+  "inputSize": 224,
+  "numberOfClasses": 4,
+  "classNames": [
+    "Normal",
+    "Pneumonia",
+    "Cardiomegaly",
+    "Pleural_Effusion"
+  ],
+  "imageColumn": "Image Index",
+  "labelSourceColumn": "Finding Labels",
+  "metadata": {
+    "columns": [
+      "Patient Age",
+      "OriginalImage[Width",
+      "Height]",
+      "OriginalImagePixelSpacing[x",
+      "y]",
+      "Patient Sex",
+      "View Position"
+    ],
+    "numericColumns": [
+      "Patient Age",
+      "OriginalImage[Width",
+      "Height]",
+      "OriginalImagePixelSpacing[x",
+      "y]"
+    ],
+    "categoricalColumns": [
+      "Patient Sex",
+      "View Position"
+    ],
+    "categoricalValues": {
+      "Patient Sex": [
+        "M",
+        "F"
+      ],
+      "View Position": [
+        "PA",
+        "AP"
+      ]
+    },
+    "dimension": 11,
+    "normalization": {
+      "age": 100.0,
+      "width": 3000.0,
+      "height": 3000.0,
+      "spacing": 1.0
+    }
+  },
+  "excludedIdentifiers": [
+    "Image Index",
+    "Patient ID",
+    "Follow-up #"
+  ],
+  "trainingDate": "2026-09-13T19:00:10.546615+00:00",
+  "numberOfEpochs": 8,
+  "datasetSizes": {
+    "total": 4999,
+    "train": 3447,
+    "validation": 722,
+    "test": 830
+  },
+  "metrics": {
+    "threshold": 0.5,
+    "per_class": {
+      "Normal": {
+        "roc_auc": 0.7238619543787187,
+        "precision": 0.7515723270440252,
+        "recall": 0.5299334811529933,
+        "f1": 0.6215864759427828,
+        "sensitivity": 0.5299334811529933,
+        "specificity": 0.7915567282321899,
+        "support": 451,
+        "confusion_matrix": [
+          [
+            300,
+            79
+          ],
+          [
+            212,
+            239
+          ]
+        ]
+      },
+      "Pneumonia": {
+        "roc_auc": 0.7091423948220065,
+        "precision": 0.00997506234413965,
+        "recall": 0.6666666666666666,
+        "f1": 0.019656019656019656,
+        "sensitivity": 0.6666666666666666,
+        "specificity": 0.5182038834951457,
+        "support": 6,
+        "confusion_matrix": [
+          [
+            427,
+            397
+          ],
+          [
+            2,
+            4
+          ]
+        ]
+      },
+      "Cardiomegaly": {
+        "roc_auc": 0.8054324025985777,
+        "precision": 0.2517985611510791,
+        "recall": 0.4794520547945205,
+        "f1": 0.330188679245283,
+        "sensitivity": 0.4794520547945205,
+        "specificity": 0.8626155878467635,
+        "support": 73,
+        "confusion_matrix": [
+          [
+            653,
+            104
+          ],
+          [
+            38,
+            35
+          ]
+        ]
+      },
+      "Pleural_Effusion": {
+        "roc_auc": 0.8444477357722072,
+        "precision": 0.2804532577903683,
+        "recall": 0.8761061946902655,
+        "f1": 0.4248927038626609,
+        "sensitivity": 0.8761061946902655,
+        "specificity": 0.6457461645746164,
+        "support": 113,
+        "confusion_matrix": [
+          [
+            463,
+            254
+          ],
+          [
+            14,
+            99
+          ]
+        ]
+      }
+    },
+    "overall": {
+      "roc_auc": 0.7707211218928776,
+      "precision": 0.32344980208240304,
+      "recall": 0.6380395993261114,
+      "f1": 0.3490809696766866,
+      "sensitivity": 0.6380395993261114,
+      "specificity": 0.704530591037179
+    },
+    "sample_count": 830
+  },
+  "evaluation": {
+    "status": "complete",
+    "resultsPath": "outputs\\evaluation\\evaluation.json"
+  }
+}
