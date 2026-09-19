@@ -389,7 +389,42 @@ export function ReportDocument({
                 Images and explanations
               </h2>
             </div>
-            <Info className="h-5 w-5 text-slate-400" />
+            <div className="flex items-center gap-2">
+              {!publicMode && findings.length > 0 && (
+                <>
+                  <select
+                    value={selectedFinding}
+                    onChange={event => setSelectedFinding(event.target.value)}
+                    className="h-9 rounded-full border border-slate-200 bg-white px-3 text-sm"
+                  >
+                    {findings.map(item => (
+                      <option key={item.name} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    size="sm"
+                    disabled={!selectedFinding || gradcamMutation.isPending}
+                    onClick={() =>
+                      gradcamMutation.mutate({
+                        id: report.id,
+                        finding: selectedFinding,
+                      })
+                    }
+                    className="rounded-full bg-slate-900 text-white"
+                  >
+                    {gradcamMutation.isPending ? (
+                      <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="mr-2 h-3.5 w-3.5 text-cyan-300" />
+                    )}
+                    Generate explanation
+                  </Button>
+                </>
+              )}
+              <Info className="h-5 w-5 text-slate-400" />
+            </div>
           </div>
           <div className="mt-5 grid gap-5 lg:grid-cols-2">
             <ImagePanel
