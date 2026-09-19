@@ -1,4 +1,4 @@
-import os, tempfile, time
+import os, tempfile, time, base64
 from pathlib import Path
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from pydantic import BaseModel
@@ -37,7 +37,14 @@ async def gradcam_endpoint(image: UploadFile=File(...), studyId: str|None=Form(N
     tmp=None
     try:
         suffix=Path(image.filename or '.img').suffix or '.img'; f=tempfile.NamedTemporaryFile(suffix=suffix,delete=False); f.write(await image.read()); f.close(); tmp=f.name
-        get_predictor(); return gradcam.generate(tmp,finding,OUTPUT_DIR,studyId)
+        get_predictor()
+        result = gradcam.generate(tmp,finding,OUTPUT_DIR,studyId)
+        images = {}
+        for key, path in result['paths'].items():
+            with open(path, 'rb') as fp:
+                images[key] = base64.b64encode(fp.read()).decode('utf-8')
+        result['images'] = images
+        return result
     except Exception as exc: raise HTTPException(status_code=422,detail={'code':'GRADCAM_FAILED','message':str(exc)})
     finally:
         if tmp: Path(tmp).unlink(missing_ok=True)
