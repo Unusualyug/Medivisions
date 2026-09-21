@@ -270,13 +270,75 @@ export const appRouter = router({
               imageUrl: study.storageUrl,
               studyId: String(study.id),
             });
-            const completed = await updateReportResult(report.id, {
+            console.log(
+              "=== RAW PREDICTION RESPONSE ===",
+              JSON.stringify(prediction, null, 2)
+            );
+            const rawFindings =
+              prediction.predictions ||
+              prediction.findings ||
+              prediction.probabilities ||
+              [];
+            const findings = rawFindings.map((item: any) => ({
+              name: item.name ?? item.finding,
+              probability: item.probability,
+              positive: item.positive,
+            }));
+
+            let completed = await updateReportResult(report.id, {
               status: "completed",
               modelVersion: String(prediction.modelVersion || "DenseNet121"),
-              findingsJson: JSON.stringify(
-                prediction.findings || prediction.probabilities || prediction
-              ),
+              findingsJson: JSON.stringify(findings),
             });
+
+            // Automatically generate Grad-CAM visuals for the top finding
+            if (
+              isCloudinaryConfigured() &&
+              Array.isArray(findings) &&
+              findings.length
+            ) {
+              try {
+                const topFinding = [...findings].sort(
+                  (a: any, b: any) =>
+                    (b.probability ?? 0) - (a.probability ?? 0)
+                )[0];
+
+                const gradcamResult = await generateGradcam({
+                  imageUrl: study.storageUrl,
+                  studyId: String(study.id),
+                  finding: topFinding.name,
+                });
+
+                const [processed, heatmap, overlay] = await Promise.all([
+                  uploadDerivedImage(
+                    Buffer.from(gradcamResult.images.processed, "base64"),
+                    `report-${report.id}-processed`
+                  ),
+                  uploadDerivedImage(
+                    Buffer.from(gradcamResult.images.heatmap, "base64"),
+                    `report-${report.id}-${topFinding.name}-heatmap`
+                  ),
+                  uploadDerivedImage(
+                    Buffer.from(gradcamResult.images.overlay, "base64"),
+                    `report-${report.id}-${topFinding.name}-overlay`
+                  ),
+                ]);
+                completed = await updateReportResult(report.id, {
+                  status: "completed",
+                  processedImageUrl: processed.secureUrl,
+                  gradcamHeatmapUrl: heatmap.secureUrl,
+                  gradcamOverlayUrl: overlay.secureUrl,
+                });
+              } catch (gradcamError) {
+                console.warn(
+                  "[ML] Grad-CAM auto-generation failed:",
+                  gradcamError instanceof Error
+                    ? gradcamError.message
+                    : gradcamError
+                );
+              }
+            }
+
             if (isMongoConfigured())
               void mirrorReport({
                 legacyId: completed.id,

@@ -464,7 +464,7 @@ export function ReportDocument({
               {findings.map(finding => (
                 <div
                   key={finding.name}
-                  className={`rounded-3xl border p-5 ${riskClass(finding.risk)}`}
+                  className={`rounded-3xl border p-5 ${riskClass(finding.positive ? "high" : "low")}`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
